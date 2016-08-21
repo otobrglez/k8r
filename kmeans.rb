@@ -9,6 +9,10 @@ Point = Struct.new(:x, :y) do
 
   alias :distance euclidean_distance
 
+  def to_centroid
+    Centroid.new(x, y)
+  end
+
   def to_s
     "[#{x},#{y}]"
   end
@@ -19,10 +23,6 @@ Point = Struct.new(:x, :y) do
 
   def print_dump(color=0, label='')
     puts dump(color, label)
-  end
-
-  def to_centroid
-    Centroid.new(x, y)
   end
 end
 
@@ -41,9 +41,9 @@ Centroid = Class.new(Point) do
   end
 
   def update_mean!
-    self.x = mean.x
-    self.y = mean.y
-    # self.y = , mean.y # if self.x != x or self.y != y
+    new_distance = distance(Point.new(mean.x, mean.y))
+    self.x, self.y = mean.x, mean.y
+    new_distance
   end
 
   def set(point)
@@ -58,8 +58,6 @@ Centroid = Class.new(Point) do
     points.delete(point)
   end
 end
-
-# POINTS = DATA.read.split("\n").map { |l| l.split(',').map(&:to_i) }.map { |p| Point.new(*p) }
 
 POINTS = [[80, 55], [86, 59], [19, 85], [41, 47], [57, 58],
           [76, 22], [94, 60], [13, 93], [90, 48], [52, 54],
@@ -81,23 +79,19 @@ class KMeans
   end
 
   def run
-    @centroids = pick_centroids :first # :random # :first # :random
+    @centroids = pick_centroids :random
 
-    # dump_frame './steps/step-000.dat'
-
-    20.times do |i|
+    30.times do |i|
       @data.each_with_index do |point, index|
         prev_centroid, prev_centroid_index = previous_centroid point
         centroid, centroid_index = nearest_centroid point
-
-        if prev_centroid && prev_centroid_index != centroid_index
-          @centroids[prev_centroid_index].remove(point)
-        end
-
+        @centroids[prev_centroid_index].remove(point) if prev_centroid && prev_centroid_index != centroid_index
         @centroids[centroid_index].set(point)
       end
 
-      @centroids.map(&:update_mean!)
+      new_means = @centroids.map(&:update_mean!)
+      return if new_means.inject(0.0) { |sum, d| sum +=d } === 0.0
+
       dump_frame './steps/step-%03d.dat' % [i]
     end
 
@@ -137,59 +131,4 @@ class KMeans
   end
 end
 
-m = KMeans.new(5, POINTS)
-m.run
-
-exit 0
-puts
-puts 'Report:'
-m.centroids.each_with_index do |centroid, i|
-  puts "#{centroid} centroid #{i}"
-  centroid.points.each do |p|
-    puts "#{p}"
-  end
-end
-
-# K-Means++ = finding best "k"
-# Elbow = finding cluster with minimal distorsion http://www.edureka.co/blog/k-means-clustering/
-
-=begin
-6,5
-9,1
-10,1
-5,5
-7,7
-4,1
-10,7
-6,8
-10,2
-9,4
-2,5
-9,1
-10,9
-2,8
-1,1
-6,1
-3,8
-2,3
-7,9
-7,7
-3,6
-5,8
-7,5
-10,9
-10,9
-=end
-__END__
-185,72
-170,56
-168,60
-179,68
-182,72
-188,77
-180,71
-180,70
-183,84
-180,88
-180,67
-177,76
+KMeans.new(7, POINTS).run

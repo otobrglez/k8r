@@ -1,6 +1,6 @@
 # k8r
 
-Playing around with K-Means, K-Means++, K-Means||,...
+Playing around with [K-Means](https://en.wikipedia.org/wiki/K-means_clustering).
 
 ![K-Means](x.png)
 

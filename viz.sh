@@ -1,7 +1,7 @@
 #!/usr/bin/env gnuplot
 load 'config.gp'
 
-# set offsets 1.1, 1.1, 1.1, 1.1
+set offsets 1.1, 1.1, 1.1, 1.1
 
 set output 'x.png'
 
