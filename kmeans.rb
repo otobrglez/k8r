@@ -41,7 +41,7 @@ Centroid = Class.new(Point) do
   end
 
   def update_mean!
-    new_distance = distance(Point.new(mean.x, mean.y))
+    new_distance = distance Point.new(mean.x, mean.y)
     self.x, self.y = mean.x, mean.y
     new_distance
   end
