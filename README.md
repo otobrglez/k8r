@@ -7,7 +7,9 @@ Playing around with K-Means, K-Means++, K-Means||,...
 ## Develpment
 
 ```bash
-./kmeans.rb > data.dat && ./viz.sh`
+make clean \
+    build \ # generates picture
+    record  # generates animation
 open x.png
 ```
 

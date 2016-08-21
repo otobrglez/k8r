@@ -41,7 +41,9 @@ Centroid = Class.new(Point) do
   end
 
   def update_mean!
-    self.x, self.y = mean.x, mean.y # if self.x != x or self.y != y
+    self.x = mean.x
+    self.y = mean.y
+    # self.y = , mean.y # if self.x != x or self.y != y
   end
 
   def set(point)
@@ -81,9 +83,9 @@ class KMeans
   def run
     @centroids = pick_centroids :first # :random # :first # :random
 
-    dump_frame "./steps/step-0.dat"
+    # dump_frame './steps/step-000.dat'
 
-    100.times do |i|
+    20.times do |i|
       @data.each_with_index do |point, index|
         prev_centroid, prev_centroid_index = previous_centroid point
         centroid, centroid_index = nearest_centroid point
@@ -96,7 +98,7 @@ class KMeans
       end
 
       @centroids.map(&:update_mean!)
-      dump_frame "./steps/step-#{i+1}.dat"
+      dump_frame './steps/step-%03d.dat' % [i]
     end
 
     dump_frame
@@ -135,7 +137,7 @@ class KMeans
   end
 end
 
-m = KMeans.new(3, POINTS)
+m = KMeans.new(5, POINTS)
 m.run
 
 exit 0
